@@ -90,7 +90,6 @@
     border-bottom-right-radius: 10px;
 }
 
-/* Имитация блика */
 .shine {
     position: absolute;
     top: 0;
@@ -107,7 +106,6 @@
     mix-blend-mode: overlay;
 }
 
-/* Подписи */
 .label-container {
     margin-top: 6px;
     display: flex;

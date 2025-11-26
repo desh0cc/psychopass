@@ -5,7 +5,6 @@
     import { pushOverlay } from "../libs/overlayState";
     import linkifyHtml from 'linkify-html';
     import { openUrl } from "@tauri-apps/plugin-opener";
-    import { show } from "@tauri-apps/api/app";
 
     export let message: MessageType;
     export let jumpButton: boolean = false;
@@ -317,7 +316,6 @@
     justify-content: start;
 }
 
-/* MAIN MEDIA */
 .media img,
 .media video {
     max-width: 260px;

@@ -325,16 +325,15 @@ main.container {
     z-index: 10;
     display: flex;
     align-items: center;
-    justify-content: center; /* центрирует input */
+    justify-content: center;
     gap: 20px;
     padding: 10px 20px;
     background: #121212;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* input */
 .search-bar input {
-    flex: 0 1 60%; /* занимает 60% ширины */
+    flex: 0 1 60%;
     height: 40px;
     padding: 12px 14px;
     border-radius: 14px;
@@ -352,7 +351,6 @@ main.container {
     border-color: var(--br-color);
 }
 
-/* кнопка */
 .search-bar button {
     position: relative;
     height: 65px;
@@ -368,43 +366,41 @@ main.container {
 }
 
 .tooltip-text {
-  visibility: hidden;
-  opacity: 0;
-  width: max-content;
-  max-width: 200px;
-  background-color: #222;
-  color: #fff;
-  text-align: center;
-  border-radius: 8px;
-  padding: 6px 10px;
-  position: absolute;
-  z-index: 1;
-  bottom: -85%; /* над кнопкой */
-  left: 50%;
-  transform: translateX(-50%);
-  transition: opacity 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  font-size: 13px;
-  pointer-events: none; /* чтобы курсор не мешал */
+    visibility: hidden;
+    opacity: 0;
+    width: max-content;
+    max-width: 200px;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 6px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: -85%;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-size: 13px;
+    pointer-events: none;
 }
 
-/* Маленький треугольник */
 .tooltip-text::after {
     transform: rotateX(180deg);
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -6px;
-  border-width: 6px;
-  border-style: solid;
-  border-color: #222 transparent transparent transparent;
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #222 transparent transparent transparent;
 }
 
-/* Активация */
 .search-bar button:hover .tooltip-text {
-  visibility: visible;
-  opacity: 1;
+    visibility: visible;
+    opacity: 1;
 }
 
 .search-bar button img {
