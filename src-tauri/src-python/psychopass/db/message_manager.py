@@ -102,7 +102,6 @@ class MessageManager:
 
             media_paths = [media.path for _, media in media_to_cache]
 
-            # ВАЖНО: async вызов!
             cached_paths = await self.cache.cache_media_batch(media_paths)
 
             with self.user_db.get_connection() as db:
