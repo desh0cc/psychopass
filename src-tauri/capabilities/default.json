@@ -1,0 +1,27 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "pytauri:default",
+    "core:window:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-close",
+    "core:window:allow-maximize",
+    "core:window:allow-minimize",
+    "core:window:allow-toggle-maximize",
+    "dialog:default",
+    "fs:default",
+    "fs:allow-resource-read",
+    "fs:allow-resource-write",
+    "fs:allow-localdata-write",
+    "fs:allow-localdata-read",
+    "fs:read-all",
+    "fs:write-all"
+  ]
+}
