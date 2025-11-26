@@ -11,7 +11,7 @@ MODELS = [
 
 for model_name in MODELS:
     print(f"[INFO] Loading {model_name}...")
-    model = SentenceTransformer(model_name)  # this downloads it automatically
+    model = SentenceTransformer(model_name, device="cpu")  # this downloads it automatically
 
     # Save locally
     local_path = os.path.join(MODELS_DIR, model_name.split("/")[-1])
