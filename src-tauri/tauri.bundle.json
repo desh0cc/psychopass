@@ -1,7 +1,7 @@
 {
     "bundle": {
         "active": true,
-        "targets": "all",
+        "targets": ["deb", "rpm", "appimage", "msi", "app", "dmg"],
         "resources": {
             "pyembed/python": "./",
             "psychopass.onnx": "./",
