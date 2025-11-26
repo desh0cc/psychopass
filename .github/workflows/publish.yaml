@@ -112,7 +112,7 @@ jobs:
       # Install models via install.py
       - name: Install models
         run: |
-          python src-tauri/src-python/psychopass/install.py
+          src-tauri/pyembed/python/python.exe src-tauri/src-python/psychopass/install.py
 
       # Set build environment variables, see:
       # <https://pytauri.github.io/pytauri/latest/usage/tutorial/build-standalone/#build-and-bundle>
