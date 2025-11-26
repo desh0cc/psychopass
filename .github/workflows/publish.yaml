@@ -72,11 +72,6 @@ jobs:
           node-version: lts/*
           cache: "pnpm"
 
-      # Download models via install.py
-      - name: Download models
-        run: |
-          python install.py
-
       - name: Install project dependencies
         run: |
           pnpm install
@@ -113,6 +108,11 @@ jobs:
               --compile-bytecode \
               --python=${{ env.PYTHON_PATH }} \
               ./src-tauri
+
+      # Install models via install.py
+      - name: Install models
+        run: |
+          python install.py
 
       # Set build environment variables, see:
       # <https://pytauri.github.io/pytauri/latest/usage/tutorial/build-standalone/#build-and-bundle>
