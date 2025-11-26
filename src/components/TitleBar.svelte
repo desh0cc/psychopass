@@ -71,80 +71,80 @@
 </div>
 
 <style>
-    .titlebar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 40px;
-        backdrop-filter: blur(6px);
-        background-color: rgb(36, 34, 34);
-        user-select: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-    }
+.titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    backdrop-filter: blur(6px);
+    background-color: rgb(36, 34, 34);
+    user-select: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
 
 
-    .logo {
-        display: flex;
-        align-items: center;
-        font-family: 'Cascadia Code';
-        font-size: 17px;
-        gap: 3px;
-        color: rgb(238, 240, 243);
-    }
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: 'Cascadia Code';
+    font-size: 17px;
+    gap: 3px;
+    color: rgb(238, 240, 243);
+}
 
-    .logo-emoji {
-        opacity: 0.85;
-        font-size: 17px;
-        transition: 
-            opacity 150ms ease-in,
-            font-size 150ms ease-in,
-            transform 150ms ease-in;
-    }
+.logo-emoji {
+    opacity: 0.85;
+    font-size: 17px;
+    transition: 
+        opacity 150ms ease-in,
+        font-size 150ms ease-in,
+        transform 150ms ease-in;
+}
 
-    .logo-emoji:hover {
-        opacity: 1;
-    }
+.logo-emoji:hover {
+    opacity: 1;
+}
 
-    .left-section,
-    .controls {
-        display: flex;
-        align-items: center;
-        gap: 0px;
-    }
+.left-section,
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+}
 
-    .not-clickable{
-        color: transparent;
-    }
+.not-clickable{
+    color: transparent;
+}
 
-    .not-clickable:hover {
-        background: transparent;
-    }
+.not-clickable:hover {
+    background: transparent;
+}
 
-    button { 
-        font-family: 'Segoe MDL2 Assets'; 
-        display: inline-flex; 
-        background-color: transparent; 
-        border: none; 
-        color: white; 
-        justify-content: center; 
-        align-items: center; 
-        width: 45px; 
-        height: 40px; 
-        font-size: 10px; 
-        user-select: none; 
-        -webkit-user-select: none; 
-    }
+button { 
+    font-family: 'Segoe MDL2 Assets'; 
+    display: inline-flex; 
+    background-color: transparent; 
+    border: none; 
+    color: white; 
+    justify-content: center; 
+    align-items: center; 
+    width: 45px; 
+    height: 40px; 
+    font-size: 10px; 
+    user-select: none; 
+    -webkit-user-select: none; 
+}
 
 
-    button:hover {
-        background: #ffffff3e;
-    }
+button:hover {
+    background: #ffffff3e;
+}
 
-    button#close:hover {
-        background: rgba(255, 34, 34, 0.75);
-    }
+button#close:hover {
+    background: rgba(255, 34, 34, 0.75);
+}
 </style>
