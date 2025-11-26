@@ -3,7 +3,6 @@
     import { pyInvoke } from "tauri-plugin-pytauri-api";
     import DashCard from "../components/DashCard.svelte";
     import { onMount } from "svelte";
-    import { progress,current_file } from "../libs/progressState";
 
     let stats: { messages: number; uploads: number; profiles: number; last_upload: string | null} =  {
         messages: 0,
@@ -230,7 +229,6 @@
     margin-top: 15px;
 }
 
-/* Loader */
 .loader {
     width: 60px;
     height: 60px;

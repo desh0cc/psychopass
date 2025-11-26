@@ -191,25 +191,25 @@ img {
 }
 
 .howitworks {
-  margin-top: 40px;
-  padding: 40px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #f1f1f1;
-  font-family: 'Nunito', 'Segoe UI', sans-serif;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    margin-top: 40px;
+    padding: 40px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f1f1f1;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 
 .steps-info {
-  display: flex;
-  flex-direction: row;
-  gap: 25px;
-  align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    align-items: center;
 }
 
 img {
@@ -230,68 +230,68 @@ img {
 }
 
 .step:hover {
-  background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .number {
-  background-color: var(--accent-color);
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .text h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
 }
 
 .text p {
-  margin: 4px 0 0;
-  font-size: 14px;
-  opacity: 0.8;
+    margin: 4px 0 0;
+    font-size: 14px;
+    opacity: 0.8;
 }
 
 .separator {
-  height: 1px;
-  width: 100%;
-  margin: 30px auto;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+    height: 1px;
+    width: 100%;
+    margin: 30px auto;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
 }
 
 .emotions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
 }
 
 .emotion {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  opacity: 0.9;
-  transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
 }
 
 .emotion:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 .emotion .color {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
 }
 
 
@@ -327,10 +327,4 @@ img {
     from { transform: translate(0,0); opacity: 0.6; }
     to { transform: translate(40px, -20px); opacity: 0.9; }
 }
-
-
-
-
-
-
 </style>
