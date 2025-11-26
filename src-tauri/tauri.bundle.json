@@ -1,0 +1,13 @@
+{
+    "bundle": {
+        "active": true,
+        "targets": "all",
+        "resources": {
+            "pyembed/python": "./",
+            "psychopass.onnx": "./",
+            "label_encoder.pkl": "./",
+            "models/clip-ViT-B-32": "models/clip-ViT-B-32",
+            "models/clip-ViT-B-32-multilingual-v1": "models/clip-ViT-B-32-multilingual-v1"
+        }
+    }
+}
