@@ -32,6 +32,17 @@ if you think this project is any cool consider giving it a **star** I would real
 
 ---
 
+## Downloads
+
+For more see [Releases](https://github.com/desh0cc/psychopass/releases)
+
+| Platform | Version | Download | Tested |
+|----------|---------|---------|---------|
+| Windows 64-bit | 0.2.0 | [Download]() | False |
+| macOS | 0.2.0 | [Download]() | False |
+| Linux | 0.2.0 | [Download]() | False |
+
+---
 ## Main Features
 
 ### Fully Local
@@ -39,10 +50,12 @@ All messages are stored in a local **SQLite3 database** on your device so all yo
 
 ### Emotion Classifier
 Sorts your messages by emotion so you can explore and rediscover old messages as well as the ones you may not want to see anymore 👀
+Basically acts as the non-chronological message provider to make storing chats more interesting
 
 ### Database Management
 - Change avatars, names, and manage **your data** however you want  
 - **. . . LINK AND MERGE! . . .**
+  - <img src="static/github/merge_showcase.gif" alt="Svelte Logo" width="600" height="480">
   - Merge different accounts into one for easy profile management
 
 ### Memory Search
