@@ -202,7 +202,6 @@
 
 .option:hover:not(:disabled) {
     transform: translateY(-6px);
-    box-shadow: 0 12px 30px rgba(40, 40, 41, 0.3);
 }
 
 .option:disabled {

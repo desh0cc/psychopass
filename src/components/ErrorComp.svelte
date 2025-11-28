@@ -2,6 +2,8 @@
     import { onMount } from "svelte";
     import { type ErrorEvent } from "../libs/errorhandler";
     import { openUrl } from "@tauri-apps/plugin-opener";
+    import { popOverlay } from "../libs/overlayState";
+
     export let error: ErrorEvent;
 
     function reportBug() {
@@ -37,9 +39,15 @@
         {/if}
     </div>
 
-    <button class="report-bug-btn" on:click={reportBug}>
-        Report this issue
-    </button>
+    <div class="buttons-div">
+        <button class="report-bug-btn" onclick={reportBug}>
+            Report this issue
+        </button>
+
+        <button class="close-error-btn" onclick={popOverlay}>
+            Close
+        </button>
+    </div>
 </main>
 
 <style>
@@ -153,14 +161,21 @@
     background: rgba(255, 255, 255, 0.15);
 }
 
-.report-bug-btn {
+.buttons-div {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+button {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     width: 100%;
     padding: 14px 24px;
-    margin-top: 24px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
@@ -172,14 +187,10 @@
     transition: all 0.2s ease;
 }
 
-.report-bug-btn:hover {
+button:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.2);
     color: rgba(255, 255, 255, 0.9);
-}
-
-.report-bug-btn:active {
-    transform: translateY(0);
 }
 
 .details-section {

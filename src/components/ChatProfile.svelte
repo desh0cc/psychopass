@@ -81,9 +81,9 @@
 	box-shadow: 0 6px 15px rgba(0,0,0,0.4);
 	transition: transform 0.2s, box-shadow 0.2s;
 	cursor: pointer;
-	overflow: auto;
 	border: none;
 	font-family: 'Nunito', 'monospace';
+	z-index: 1;
 }
 
 .container:hover {
@@ -209,7 +209,6 @@
 	border-radius: 8px;
 	padding: 6px 10px;
 	position: absolute;
-	z-index: 1;
 	bottom: 125%;
 	left: 50%;
 	transform: translateX(-50%);
@@ -235,6 +234,7 @@
 .member:hover .tooltip-text {
 	visibility: visible;
 	opacity: 1;
+	z-index: 2;
 }
 
 </style>

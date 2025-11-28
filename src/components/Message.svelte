@@ -72,11 +72,7 @@
 
                 {#if message.reply.media}
                     <div class="reply-media">
-                        {#each message.reply.media as media}
-                            {#if media.type === "photo"}
-                                <img src={convertFileSrc(media.path)} alt={message.reply.id.toString()}/>
-                            {/if}
-                        {/each}
+                        <img src="image.svg" alt="media_default">
                     </div>
                 {/if}
             </div>
@@ -112,7 +108,7 @@
                             <track kind="captions">
                         </video>
                     {:else}
-                        <a class="file" href={convertFileSrc(media.path)} download>
+                        <a class="file" href={convertFileSrc(media.path)} download onclick={handleClick}>
                             Download {media.type}
                         </a>
                     {/if}
@@ -160,11 +156,13 @@
     transform: translateX(8px);
 }
 
+.media :global(a),
 .text :global(a) {
     color: #4da6ff;
     text-decoration: underline;
 }
 
+.media :global(a:hover),
 .text :global(a:hover) {
     color: #80c1ff;
 }
@@ -325,9 +323,8 @@
 }
 
 .media .file {
-    margin-top: 10px;
-    color: #9cf;
-    font-size: 0.9rem;
+    margin-left: 60px;
+    margin-bottom: 5px;
 }
 
 </style>

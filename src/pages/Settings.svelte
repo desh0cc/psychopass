@@ -24,7 +24,7 @@
     <div class="settings-cont">
         <SettingsField
             label={"App Version"}>
-            <p style="font-weight: 700;" >0.1.0</p>
+            <p style="font-weight: 700;" >0.2.0</p>
         </SettingsField>
         <SettingsField
             label={"Developed by"}>
