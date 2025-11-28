@@ -77,6 +77,7 @@ export interface MessageType {
     platform_id: number;
     reply: MessageType | null;
     media: Array<Media> | null;
+    forwarded_from: string | null;
 }
  
 export interface EmotionStatsByYear {

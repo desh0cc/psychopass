@@ -1,8 +1,9 @@
 import os, random, configparser
 import asyncio, math, logging
+import traceback, functools
 import numpy as np
-import functools
 
+from datetime import datetime
 from pathlib import Path
 from appdirs import user_config_dir
 from typing import Annotated, Union, Optional, List, Tuple, Callable, Any
@@ -81,9 +82,25 @@ def handle_errors(func: Callable) -> Callable:
                     ))
                     print(f"[DEBUG] Error event emitted for {func.__name__}")
                 except Exception as emit_error:
-                    logging.error(f"Failed to emit error event: {emit_error}")
+                    logging.error(f"[ERROR] Failed to emit error event: {emit_error}")
             else:
-                logging.warning("AppHandle not found, cannot emit error to frontend")
+                logging.warning("[WARN] AppHandle not found, cannot emit error to frontend")
+            
+            # write log if error occurs
+            logs_dir = Path(APP_DIR) / "logs"
+            logs_dir.mkdir(parents=True, exist_ok=True)
+
+            now = datetime.now()
+            error_file = logs_dir / f"{now.strftime('%Y-%m-%d_%H-%M-%S')}_{func.__name__}.log"
+
+            try:
+                with error_file.open("a", encoding="utf-8") as f:
+                    f.write(f"[{now.isoformat()}] Error in {func.__name__}:\n")
+                    f.write(traceback.format_exc())
+                    f.write("\n\n")
+                print(f"[DEBUG] Log {error_file} was saved at {logs_dir}")
+            except Exception as file_error:
+                logging.error(f"[ERROR] Failed to write error log to file: {file_error}")
             
             return None
     return wrapper
@@ -399,6 +416,42 @@ async def linear_search(query: str):
 @commands.command()
 async def get_yearly_emotions() -> EmotionStatsByYear:
     return database.get_yearly_emotions()
+
+@commands.command()
+@handle_errors
+async def delete_chat(app_handle: AppHandle, body: Annotated[ChatRequest, "body"]) -> dict:
+    res = database.delete_chat(body.chat_id)
+
+    if res['success']:
+        Emitter.emit(app_handle, "delete_event", DeleteEvent(
+            obj_type="chat",
+            obj_id=body.chat_id)
+        )
+    return res
+    
+@commands.command()
+@handle_errors
+async def delete_profile(app_handle: AppHandle, body: Annotated[ProfileUpdate, "body"]) -> dict:
+    res = database.delete_profile(body.id)
+
+    if res['success']:
+        Emitter.emit(app_handle, "delete_event", DeleteEvent(
+            obj_type="profile",
+            obj_id=body.id)
+        )
+    return res
+
+@commands.command()
+@handle_errors
+async def delete_message(app_handle: AppHandle, body: Annotated[MessageRequest, "body"]) -> dict:
+    res = database.delete_message(body.message_id)
+
+    if res['success']:
+        Emitter.emit(app_handle, "delete_event", DeleteEvent(
+            obj_type="message",
+            obj_id=body.message_id)
+        )
+    return res
 
 def main() -> int:
     with start_blocking_portal("asyncio") as portal:  # or `trio`

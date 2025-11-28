@@ -77,17 +77,40 @@ class ProfileManager:
                 return f"No profile found with id {profile_id}."
             return f"Profile {profile_id} successfully updated."
 
-    def delete(self, profile_id: int) -> str:
-        """delete profile with all messages and platform users"""
-        with self.user_db.get_connection() as db:
-            cursor = db.cursor()
+    def delete(self, profile_id: int):
+        """Delete profiles and all its data"""
+        with self.user_db.get_connection() as conn:
+            cursor = conn.cursor()
+            
+            # Profile validation
+            cursor.execute("SELECT id FROM profile WHERE id = ?", (profile_id,))
+            if not cursor.fetchone():
+                return {"success": False, "error": "Profile not found"}
+            
+            cursor.execute("""
+                DELETE FROM media 
+                WHERE message_id IN (SELECT id FROM message WHERE user_id = ?)
+            """, (profile_id,))
+            
+            cursor.execute("DELETE FROM message WHERE user_id = ?", (profile_id,))
+            deleted_messages = cursor.rowcount
             
             cursor.execute("DELETE FROM platform_user WHERE profile_id = ?", (profile_id,))
-            cursor.execute("DELETE FROM message WHERE user_id = ?", (profile_id,))
+            deleted_platforms = cursor.rowcount
+            
+            cursor.execute("""
+                DELETE FROM merge_history 
+                WHERE primary_id = ? OR secondary_id = ?
+            """, (profile_id, profile_id))
+            
             cursor.execute("DELETE FROM profile WHERE id = ?", (profile_id,))
-            if cursor.rowcount == 0:
-                return f"No profile found with id {profile_id}."
-            return f"Profile {profile_id} and related data deleted successfully."
+            
+            return {
+                "success": True,
+                "deleted_profile_id": profile_id,
+                "deleted_messages": deleted_messages,
+                "deleted_platforms": deleted_platforms
+            }
 
     def merge(self, primary_id: int, secondary_ids: List[int]) -> str:
         """merge list of profiles together"""

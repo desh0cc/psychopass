@@ -89,6 +89,7 @@ class UserDB:
                     emotion TEXT,
                     timestamp TEXT,
                     reply_to INTEGER,
+                    forwarded_from TEXT,
                     UNIQUE(chat_id, timestamp, text),
                     FOREIGN KEY(user_id) REFERENCES profile(id),
                     FOREIGN KEY(chat_id) REFERENCES chat(id),
@@ -160,6 +161,9 @@ class UserDB:
     def get_chat(self, chat_id: int):
         return self.chats.get(chat_id)
     
+    def delete_chat(self, chat_id: int):
+        return self.chats.delete(chat_id)
+    
     def get_chats(self):
         return self.chats.get_all()
     
@@ -190,6 +194,9 @@ class UserDB:
     
     def search_messages(self, query: str):
         return self.messages.search_messages(query)
+    
+    def delete_message(self, message_id: int):
+        return self.messages.delete(message_id)
     
     # Stats methods
     def get_stats(self):

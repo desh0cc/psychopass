@@ -9,11 +9,12 @@
 	import { fly } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";
 
-	// Overlay thingies
+	// Overlay components
 	import { overlayStack, popOverlay } from "../libs/overlayState";
 	import FullProfile from "../components/FullProfile.svelte";
 	import EmotionDialog from "../components/EmotionDialog.svelte";
 	import Chat from "../components/Chat.svelte";
+	import ConfirmDialog from "../components/ConfirmDialog.svelte";
 
 	// Pages
 	import Home from "../pages/Home.svelte";
@@ -27,11 +28,15 @@
 	import { progress, current_file, max_progress } from "../libs/progressState";
 	import ErrorComp from "../components/ErrorComp.svelte";
 	import { errorListener } from "../libs/errorhandler";
+	import { initDeleteListener } from "../libs/deleteState";
+	import { contextMenuStore } from "../libs/contextMenuState";
 
 	onMount(async () => {
 		await pyInvoke('create_cfg');
 		await pyInvoke('create_database');
 		await pyInvoke('load_resources');
+
+		let unlisten = await initDeleteListener();
 	})
 
 	$: overlay = $overlayStack.length > 0 ? $overlayStack[$overlayStack.length - 1] : null;
@@ -52,6 +57,8 @@
 
 		percentage = 0;
 	}
+
+	
 </script>
 
 <main class="container">
@@ -70,13 +77,15 @@
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<div class="overlay-content" onclick={(e) => e.stopPropagation()} role="button" tabindex="0">
 				{#if overlay.type === 'profile'}
-				<FullProfile {...overlay.data}/>
+					<FullProfile {...overlay.data}/>
 				{:else if overlay.type === "emotion"}
-				<EmotionDialog {...overlay.data}/>
+					<EmotionDialog {...overlay.data}/>
 				{:else if overlay.type === "chat"}
-				<Chat {...overlay.data}/>
+					<Chat {...overlay.data}/>
 				{:else if overlay.type === "error"}
-				<ErrorComp {...overlay.data}/>
+					<ErrorComp {...overlay.data}/>
+				{:else if overlay.type === "sure"}
+					<ConfirmDialog {...overlay.data}/>
 				{/if}
 			</div>
 		</div>

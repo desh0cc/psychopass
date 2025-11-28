@@ -154,7 +154,7 @@
         </button>
     </div>
 
-    {#key filteredItems.length}
+    {#key `${filteredItems.length}-${$currentMode}`}
         <div class="items-div"> 
         {#if filteredItems.length > 0} 
             <VirtualList items={grouped} minItemHeight={300} height={containerHeight}> 

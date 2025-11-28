@@ -8,6 +8,8 @@
     import { chosen_color } from "../libs/preferences";
     import { open } from "@tauri-apps/plugin-dialog";
     import { profilesRefresh } from "../libs/overlayState";
+    import { handleGlobalClick } from "../libs/contextMenuState";
+    import { AreYouSure } from "../libs/deleteState";
 
     let { chat_id, scroll_to }: { chat_id: string, scroll_to: number | null } = $props();
 
@@ -20,6 +22,8 @@
 
     let currentDateLabel = $state("");
     let messageElements: (HTMLDivElement | null)[] = $state([]);
+    
+    let showDeleteConfirm = $state(false);
     
     let virtualizer = $derived(createVirtualizer<HTMLDivElement, HTMLDivElement>({
         count: messages.length,
@@ -142,10 +146,18 @@
         profilesRefresh.set(true);
         console.log(res);
     }
+
+    async function handleDelete() {
+        const res = await pyInvoke("delete_chat", {"chat_id": chat_info?.id})
+        profilesRefresh.set(true);
+    }
 </script>
 
-<main class="container" style="--accent: {$chosen_color}">
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<main class="container" style="--accent: {$chosen_color}" onclick={handleGlobalClick}>
     <div class="header">
+        <div style="flex: 1;"></div>
         <div
             class="avatar"
             onclick={() => selectFile()}
@@ -181,6 +193,14 @@
                     ((e.target as HTMLInputElement).value.length + 1 || 1) +
                     "ch")}
         />
+        <div style="flex: 1;"></div>
+        <button 
+            class="delete-btn" 
+            onclick={() => AreYouSure(handleDelete)}
+            title="Delete chat"
+        >
+            <img src="delete.svg" alt="delete" />
+        </button>
     </div>
 
     <div class="message-div" bind:this={messageContainer}>
@@ -222,170 +242,197 @@
 </main>
 
 <style>
-    .container {
-        display: flex;
-        flex-direction: column;
-        height: 80vh;
-        width: 70vw;
-        font-family: "Nunito", "monospace";
-        color: white;
-        border-radius: 25px;
-        margin-top: -40px;
-        overflow: hidden;
-        background: rgba(20, 20, 25, 0.95);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    width: 70vw;
+    font-family: "Nunito", "monospace";
+    color: white;
+    border-radius: 25px;
+    margin-top: -40px;
+    overflow: hidden;
+    background: rgba(20, 20, 25, 0.95);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-    .header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        flex-shrink: 0;
-        height: 90px;
-        background: #151515;
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        font-weight: 700;
-        font-size: 20px;
-        gap: 15px;
-        padding: 15px 20px;
-    }
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    flex-shrink: 0;
+    height: 90px;
+    background: #151515;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+    font-size: 20px;
+    gap: 15px;
+    padding: 15px 20px;
+    position: relative;
+}
 
-    .message-div {
-        flex: 1;
-        position: relative;
-        width: 100%;
-        background: rgba(17, 17, 18, 0.987);
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
+.message-div {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    background: rgba(17, 17, 18, 0.987);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 
-    .message-div::-webkit-scrollbar {
-        width: 12px;
-    }
+.message-div::-webkit-scrollbar {
+    width: 12px;
+}
 
-    .message-div::-webkit-scrollbar-track {
-        background: rgba(25, 24, 24, 0.962);
-    }
+.message-div::-webkit-scrollbar-track {
+    background: rgba(25, 24, 24, 0.962);
+}
 
-    .message-div::-webkit-scrollbar-thumb {
-        background-color: var(--accent);
-        border-radius: 4px;
-        border: 2px solid transparent;
-        background-clip: content-box;
-    }
+.message-div::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
 
-    .avatar {
-        flex-shrink: 0;
-        width: 65px;
-        height: 65px;
-        border-radius: 50%;
-        overflow: hidden;
-        background: rgba(50, 50, 55, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: white;
-        text-transform: uppercase;
-        font-size: 22px;
-        position: relative;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-    }
+.avatar {
+    flex-shrink: 0;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(50, 50, 55, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    font-size: 22px;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
 
-    .avatar:hover {
-        transform: scale(1.05);
-        border-color: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    }
+.avatar:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
 
-    .avatar .avatar-overlay {
-        opacity: 0;
-    }
+.avatar .avatar-overlay {
+    opacity: 0;
+}
 
-    .avatar:hover .avatar-overlay {
-        opacity: 1;
-    }
+.avatar:hover .avatar-overlay {
+    opacity: 1;
+}
 
-    .avatar:hover img {
-        filter: brightness(0.4);
-    }
+.avatar:hover img {
+    filter: brightness(0.4);
+}
 
-    .avatar-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        color: white;
-    }
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+}
 
-    .avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: filter 0.3s ease;
-    }
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+}
 
-    .placeholder {
-        font-size: 24px;
-    }
+.placeholder {
+    font-size: 24px;
+}
 
-    .name-input {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #fff;
-        background: transparent;
-        border: none;
-        outline: none;
-        padding: 8px 12px;
-        margin: 0;
-        font-family: "Nunito", sans-serif;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
+.name-input {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 8px 12px;
+    margin: 0;
+    font-family: "Nunito", sans-serif;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
 
-    .name-input:hover {
-        background: rgba(255, 255, 255, 0.05);
-    }
+.name-input:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
 
-    .name-input:focus {
-        background: rgba(255, 255, 255, 0.08);
-        box-shadow: 0 0 0 2px rgba(var(--accent), 0.3);
-    }
+.name-input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 2px rgba(var(--accent), 0.3);
+}
 
-    .date-separator {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 20px 0 15px 0;
-        position: relative;
-    }
+.delete-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.delete-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    transform: scale(1.05);
+}
+
+.delete-btn img {
+    width: 25px;
+    height: 25px;
+    filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(336deg) brightness(95%) contrast(91%);
+}
+
+.date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0 15px 0;
+    position: relative;
+}
 
 
-    .date-label {
-        padding: 6px 16px;
-        background: #151515;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 600;
-        color: white;
-        margin: 0 15px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        white-space: nowrap;
-    }
+.date-label {
+    padding: 6px 16px;
+    background: #151515;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    margin: 0 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+}
 </style>

@@ -63,8 +63,8 @@ class MessageManager:
                             reply_to_id = row[0]
 
                 cursor.execute("""
-                    INSERT OR IGNORE INTO message (user_id, text, emotion, chat_id, timestamp, platform_id, reply_to)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT OR IGNORE INTO message (user_id, text, emotion, chat_id, timestamp, platform_id, reply_to, forwarded_from)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     profile_id,
                     msg.text,
@@ -72,7 +72,8 @@ class MessageManager:
                     chat_row_id,
                     msg.timestamp,
                     str(msg.platform_id) if msg.platform_id is not None else None,
-                    reply_to_id
+                    reply_to_id,
+                    msg.forwarded_from
                 ))
 
                 message_id = cursor.lastrowid
@@ -124,7 +125,7 @@ class MessageManager:
             cursor.execute("""
                 SELECT 
                     m.id, m.platform_id, m.user_id, m.text, m.timestamp, 
-                    m.emotion, m.reply_to, m.chat_id,
+                    m.emotion, m.reply_to, m.chat_id, m.forwarded_from,
                     p.global_name, p.avatar
                 FROM message m
                 LEFT JOIN profile p ON m.user_id = p.id
@@ -144,6 +145,7 @@ class MessageManager:
                 timestamp=row['timestamp'],
                 emotion=row['emotion'],
                 chat_id=row['chat_id'],
+                forwarded_from=row['forwarded_from']
             )
 
 
@@ -156,7 +158,7 @@ class MessageManager:
             cursor.execute("""
                 SELECT 
                     m.id, m.platform_id, m.user_id, m.text, m.timestamp, 
-                    m.emotion, m.reply_to, p.global_name, p.avatar
+                    m.emotion, m.reply_to, m.forwarded_from, p.global_name, p.avatar
                 FROM message m
                 LEFT JOIN profile p ON m.user_id = p.id
                 WHERE m.chat_id = ?
@@ -165,7 +167,7 @@ class MessageManager:
 
             rows = cursor.fetchall()
             for row in rows:
-                db_id, platform_id, user_id, text, timestamp, emotion, reply_to, author_name, avatar = row
+                db_id, platform_id, user_id, text, timestamp, emotion, reply_to, forwarded_from, author_name, avatar = row
                 msg = Message(
                     id=db_id,
                     chat_id=chat_id,
@@ -176,7 +178,8 @@ class MessageManager:
                     emotion=emotion,
                     avatar=avatar,
                     media=None,
-                    reply=None
+                    reply=None,
+                    forwarded_from=forwarded_from
                 )
                 messages[db_id] = msg
                 if reply_to:
@@ -379,3 +382,16 @@ class MessageManager:
                 all_years=all_years_stats,
                 by_year=by_year
             )
+        
+    def delete(self, message_id: int):
+        """delete message and linked media"""
+        with self.user_db.get_connection() as conn:
+            cursor = conn.cursor()
+            
+            cursor.execute("DELETE FROM media WHERE message_id = ?", (message_id,))
+            cursor.execute("DELETE FROM message WHERE id = ?", (message_id,))
+            
+            if cursor.rowcount == 0:
+                return {"success": False, "error": "Message not found"}
+            
+            return {"success": True, "deleted_id": message_id}

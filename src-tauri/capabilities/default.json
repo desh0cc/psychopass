@@ -22,6 +22,8 @@
     "fs:allow-localdata-write",
     "fs:allow-localdata-read",
     "fs:read-all",
-    "fs:write-all"
+    "fs:write-all",
+    "fs:allow-read",
+    "fs:allow-read-file"
   ]
 }

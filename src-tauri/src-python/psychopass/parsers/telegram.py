@@ -23,7 +23,7 @@ def parse_telegram(dir_path: str) -> Tuple[List[Message], List[Chat]]:
         chats.append(chat)
 
         for message in tqdm(data['messages'], desc="Reading messages"):
-            media, text, reply = None, None, None
+            media, text, reply, forwarded = [None for _ in range(4)]
 
             if message['type'] != "message": continue
 
@@ -61,6 +61,9 @@ def parse_telegram(dir_path: str) -> Tuple[List[Message], List[Chat]]:
             # if reply: print(f"Yo! There's reply: {reply}")
             if media: print(f"Media: {media}")
 
+            # check if forwarded
+            forwarded = message.get("forwarded_from", None)
+
             # message build
             mssg = Message(
                 author_id=message['from_id'],
@@ -70,7 +73,8 @@ def parse_telegram(dir_path: str) -> Tuple[List[Message], List[Chat]]:
                 platform_id=message['id'],
                 media=[media] if media is not None else None,
                 reply=reply,
-                chat=chat
+                chat=chat,
+                forwarded_from=forwarded
             )
 
             messages.append(mssg)

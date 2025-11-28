@@ -24,7 +24,7 @@ class Message:
     media: Optional[List[Media]] = None
     reply: Optional[Message] = None
     chat: Optional[Chat] = None
-
+    forwarded_from: Optional[str] = None
 
 @dataclass
 class Chat:

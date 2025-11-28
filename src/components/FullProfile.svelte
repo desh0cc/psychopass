@@ -11,7 +11,8 @@
     import { chosen_color } from "../libs/preferences";
     import { type ChatType } from "../libs/types";
     import { popOverlay } from "../libs/overlayState";
-  
+    import { AreYouSure } from "../libs/deleteState";
+
     export let id: number;
     export let isMerging: Writable<boolean>;
 
@@ -91,6 +92,11 @@
     function close() {
         popOverlay();
     }
+
+    async function handleDelete() {
+        const res = await pyInvoke("delete_profile", {"id": id})
+        profilesRefresh.set(true);
+    } 
 </script>
 
 <div class="profile-full" style="--thumb-color: {$chosen_color}">
@@ -171,7 +177,7 @@
                 {#each chats as chat}
                     <div class="bubble">
                         {#if chat.avatar}
-                            <img style="height:32px; width:32px; border-radius:50%" src="{convertFileSrc(chat.avatar)}" alt={chat.name}>
+                            <img style="height:32px; width:32px; border-radius:50%; object-fit: cover;" src="{convertFileSrc(chat.avatar)}" alt={chat.name}>
                         {:else}
                             <div class="placeholder">
                                 <span>{chat.name ? chat.name[0] : "?"}</span>
@@ -199,6 +205,10 @@
             <p class="no-data">No emotion data available.</p>
         {/if}
     {/if}
+
+    <button class="delete-btn" onclick={() => AreYouSure(handleDelete)}>
+        Delete
+    </button>
 </div>
 
 <style>
@@ -218,6 +228,8 @@
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease;
     user-select: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .profile-full::-webkit-scrollbar {
@@ -423,7 +435,7 @@
 .emotions {
     padding: 10px;
     max-width: 75%;
-    max-height: 250px;
+    height: 250px;
     justify-content: center;
     border-radius: 20px;
     background-color: #0b0b0b;
@@ -481,5 +493,33 @@ h3 {
     color: #666;
     text-align: center;
     margin-top: 20px;
+}
+
+.delete-btn {
+    width: 80%;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    flex-shrink: 0;
+    color: white;
+    font-family: 'Nunito', 'monospace';
+    padding: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ef6e68;
+}
+
+.delete-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    transform: scale(1.05);
+    color: #ffd2cc;
 }
 </style>

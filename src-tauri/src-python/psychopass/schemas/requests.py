@@ -34,3 +34,7 @@ class ProfileUpdate:
 class SearchQuery:
     query: str
     engine: Literal["vector", "linear"] = "vector"
+
+@dataclass
+class MessageRequest:
+    message_id: int

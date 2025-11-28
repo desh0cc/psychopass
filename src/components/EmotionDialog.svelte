@@ -4,7 +4,6 @@
     import Message from "./Message.svelte";
     import { type MessageType } from "../libs/types";
     import { colors } from "../libs/types";
-    import { VirtualList } from "flowbite-svelte";
 
     let {id, emotion}: {id: number, emotion: string} = $props();
     

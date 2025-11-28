@@ -5,16 +5,27 @@
     import { pushOverlay } from "../libs/overlayState";
     import linkifyHtml from 'linkify-html';
     import { openUrl } from "@tauri-apps/plugin-opener";
+    import { open } from "@tauri-apps/plugin-fs";
+    import { chosen_color } from "../libs/preferences";
+    import { scale } from 'svelte/transition';
+    import { contextMenuStore } from "../libs/contextMenuState";
+    import { pyInvoke } from "tauri-plugin-pytauri-api";
+    import { deleteStore } from "../libs/deleteState";
 
-    export let message: MessageType;
-    export let jumpButton: boolean = false;
-    export let emotionBg: boolean = false;
-    export let highlight: boolean = false;
-    export let showFullDate: boolean = false;
+    const { message, jumpButton = false, emotionBg = false, 
+        highlight = false, showFullDate = false} = $props<{
+        message: MessageType;
+        jumpButton?: boolean;
+        emotionBg?: boolean;
+        highlight?: boolean;
+        showFullDate?: boolean;
+    }>();
 
     const color = colors[message.emotion];
     const mssgBg = emotionBg ? color : "#ffffff0d";
     const emotionColor = emotionBg ? "#f1f1f1" : color;
+
+    let contextMenu = $state($contextMenuStore);
 
     function openMessage() {
         if (jumpButton) {
@@ -25,13 +36,56 @@
         }
     }
 
-    function handleClick(e: MouseEvent) {
+    function handleClick(e: MouseEvent, file: boolean = false) {
         const target = e.target as HTMLAnchorElement;
         if (target.tagName === 'A' && target.href) {
             e.preventDefault();
-            openUrl(target.href);
+            if (file) {open(target.href)}
+            else {
+                openUrl(target.href);
+            }
         }
     }
+
+    function handleContextMenu(e: MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = e.currentTarget as HTMLElement;
+        const chatContainer = target.closest('.chat-container') || target.offsetParent;
+        
+        if (chatContainer instanceof HTMLElement) {
+            const rect = chatContainer.getBoundingClientRect();
+            
+            const relativeX = e.clientX - rect.left;
+            const relativeY = e.clientY - rect.top;
+            
+            contextMenuStore.open(relativeX, relativeY, message.id);
+        } else {
+            contextMenuStore.open(e.clientX, e.clientY, message.id);
+        }
+    }
+
+    function closeContextMenu(e?: MouseEvent) {
+        if (e) {
+            const target = e.target as HTMLElement;
+            if (target.closest('.context-menu')) {
+                return;
+            }
+        }
+        contextMenuStore.close();
+    }
+
+    async function handleDeleteMessage(e: MouseEvent) {
+        e.stopPropagation();
+        const res = await pyInvoke("delete_message", {"message_id": message.id})
+        console.log(res);
+        contextMenuStore.close();
+    }
+
+    $effect(() => {
+        contextMenu = $contextMenuStore;
+    });
 
     const options = {
         rel: "noopener",
@@ -43,21 +97,29 @@
         validate: true
     };
 
-    let date;
+    let date = $derived(
+        showFullDate
+            ? new Date(message.timestamp).toLocaleDateString()
+            : new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    );
 
-    if (showFullDate) {
-        date = new Date(message.timestamp).toLocaleDateString()
-    } else {
-        date = new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    }
+    let isHidden = $derived(
+        $deleteStore.some(d => d.obj_type === 'message' && d.obj_id === message.id)
+    );
+
+
 
 </script>
+
 
 <button
     class="message"
     class:toside={jumpButton}
     data-emotion={message.emotion}
     onclick={openMessage}
+    oncontextmenu={handleContextMenu}
+    style="--accent: {$chosen_color}"
+    class:hide={isHidden}
 >
     {#if message.reply}
         <div class="reply-block">
@@ -108,7 +170,7 @@
                             <track kind="captions">
                         </video>
                     {:else}
-                        <a class="file" href={convertFileSrc(media.path)} download onclick={handleClick}>
+                        <a class="file" target="_blank" href={media.path} download onclick={(e) => handleClick(e, true)}>
                             Download {media.type}
                         </a>
                     {/if}
@@ -116,7 +178,13 @@
             </div>
         {/if}
 
-        <div class="text-content">
+        <div class="text-content" class:forward={message.forwarded_from !== null}>
+            {#if message.forwarded_from}
+                <p class="forward-name">
+                    <span style="opacity: 0.3;">forwarded:</span>
+                    {message.forwarded_from}
+                </p>
+            {/if}
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
             <p class="text" onclick={handleClick}>    
@@ -129,6 +197,24 @@
         {/if}
     </div>
 </button>
+
+{#if !jumpButton && contextMenu.show && contextMenu.messageId === message.id}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div 
+        class="context-menu" 
+        style="left: {contextMenu.x}px; top: {contextMenu.y}px;"
+        in:scale={{ duration: 150, start: 0.85, opacity: 0 }}
+        out:scale={{ duration: 100, start: 0.95, opacity: 0 }}
+        onclick={(e) => e.stopPropagation()}
+        oncontextmenu={(e) => e.stopPropagation()}
+    >
+        <button class="context-item delete" onclick={handleDeleteMessage}>
+            <img style="height: 20px; width:20px;" src="delete.svg" alt="delete-btn">
+            Delete message
+        </button>
+    </div>
+{/if}
 
 <style>
 .message {
@@ -149,6 +235,10 @@
     transition: all 100ms ease-in;
     background-color: transparent;
     user-select: text;
+}
+
+.message.hide {
+    display: none;
 }
 
 .message.toside:hover {
@@ -242,6 +332,14 @@
     margin-top: -10px;
 }
 
+.text-content.forward {
+    border-radius: 5px;      
+    background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    border-left: 4px solid var(--accent);
+    padding-left: 10px;
+    margin-right: 30px;
+}
+
 .text {
     margin-top: 4px;
     color: #eee;
@@ -327,4 +425,49 @@
     margin-bottom: 5px;
 }
 
+.context-menu {
+    position: fixed;
+    z-index: 9999;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    min-width: 180px;
+}
+
+.context-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: #eee;
+    font-family: 'Nunito', 'monospace';
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+.context-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.context-item.delete:hover {
+    background: rgba(255, 59, 48, 0.15);
+    color: #ff3b30;
+}
+
+.context-item.delete img {
+    filter:invert(1);
+}
+
+.context-item.delete:hover img {
+    filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(336deg) brightness(95%) contrast(91%);
+}
 </style>

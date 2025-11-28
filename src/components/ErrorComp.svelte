@@ -15,6 +15,8 @@
     onMount(()=>{
         if (error.func === "analyze_messages") {
             details = "Make sure you're using the correct parser :)"
+        } else {
+            details = "I don't think it's a known issue :("
         }
     });
 </script>
@@ -164,8 +166,8 @@
 .buttons-div {
     margin-top: 24px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;
+    gap: 7px;
     width: 100%;
 }
 

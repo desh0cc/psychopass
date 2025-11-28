@@ -128,3 +128,31 @@ class ChatManager:
             ))
         
         return participants
+    
+    def delete(self, chat_id: int):
+        """Delete chat and all messages in it"""
+        with self.db.get_connection() as conn:
+            cursor = conn.cursor()
+            
+            # chat validation
+            cursor.execute("SELECT id FROM chat WHERE id = ?", (chat_id,))
+            if not cursor.fetchone():
+                return {"success": False, "error": "Chat not found"}
+            
+            cursor.execute("""
+                DELETE FROM media 
+                WHERE message_id IN (SELECT id FROM message WHERE chat_id = ?)
+            """, (chat_id,))
+            
+            # Delete chat messages
+            cursor.execute("DELETE FROM message WHERE chat_id = ?", (chat_id,))
+            deleted_messages = cursor.rowcount
+            
+            # Delete chat
+            cursor.execute("DELETE FROM chat WHERE id = ?", (chat_id,))
+            
+            return {
+                "success": True, 
+                "deleted_chat_id": chat_id,
+                "deleted_messages": deleted_messages
+            }
