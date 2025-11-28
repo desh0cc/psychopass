@@ -117,7 +117,12 @@ jobs:
       - name: Install models
         run: |
           python -m pip install --upgrade pip
-          python -m pip install sentence-transformers torch onnxruntime onnx
+          python -m pip install \
+              torch --index-url https://download.pytorch.org/whl/cpu \
+              transformers \
+              sentence-transformers \
+              onnx \
+              onnxruntime
           python install.py
 
       # Set build environment variables, see:

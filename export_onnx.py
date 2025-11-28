@@ -17,8 +17,9 @@ class STWrapper(nn.Module):
         return out["sentence_embedding"]
 
 def export_to_onnx(name: str, path: str):
-    model = SentenceTransformer(name)
+    model = SentenceTransformer(name, device='cpu')
     model.eval()
+    model.to('cpu')
 
     wrapper = STWrapper(model)
     wrapper.eval()
