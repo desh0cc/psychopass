@@ -121,6 +121,19 @@ jobs:
             --extra-index-url https://download.pytorch.org/whl/cpu
           python install.py
 
+      # Verify models were downloaded
+      - name: Verify models directory
+        run: |
+          echo "[DEBUG] Checking models directory..."
+          ls -la src-tauri/models/ || echo "[DEBUG] Models directory not found!"
+          if [ -d "src-tauri/models/clip-ViT-B-32-multilingual-v1" ]; then
+            echo "[DEBUG] Model clip-ViT-B-32-multilingual-v1 found:"
+            ls -la src-tauri/models/clip-ViT-B-32-multilingual-v1/
+          else
+            echo "[ERROR] Model clip-ViT-B-32-multilingual-v1 not found!"
+            exit 1
+          fi
+
       # Set build environment variables, see:
       # <https://pytauri.github.io/pytauri/latest/usage/tutorial/build-standalone/#build-and-bundle>
 

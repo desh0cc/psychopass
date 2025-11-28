@@ -1,8 +1,9 @@
 import os
+import shutil
 from huggingface_hub import hf_hub_download
 from export_onnx import export_to_onnx
 
-MODELS_DIR = "src-tauri/models"
+MODELS_DIR = r"src-tauri\models"
 os.makedirs(MODELS_DIR, exist_ok=True)
 
 models = {
@@ -42,7 +43,8 @@ for name, data in models.items():
             repo_id=data['repo_id'],
             filename=file
         )
-        os.replace(file_path, dest_path)
+        # Changed from os.replace() to shutil.move() to support cross-drive moves
+        shutil.move(file_path, dest_path)
         print(f"[DEBUG] Saved {file} -> {dest_path}")
 
 print("\n All models processed successfully :p")
