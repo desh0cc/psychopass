@@ -13,7 +13,7 @@ def parse_telegram(dir_path: str) -> Tuple[List[Message], List[Chat]]:
     messages: List[Message] = []
     reply_map: dict[int,Message] = {}
 
-    for data in tqdm(data_to_parse, desc="Reading data"):
+    for data in tqdm(data_to_parse, desc="Reading data", disable=True):
         chat = Chat(
             id=0,
             name=data.get("name","uknown"),
@@ -22,7 +22,7 @@ def parse_telegram(dir_path: str) -> Tuple[List[Message], List[Chat]]:
 
         chats.append(chat)
 
-        for message in tqdm(data['messages'], desc="Reading messages"):
+        for message in tqdm(data['messages'], desc="Reading messages", disable=True):
             media, text, reply, forwarded = [None for _ in range(4)]
 
             if message['type'] != "message": continue

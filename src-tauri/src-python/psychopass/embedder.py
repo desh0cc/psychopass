@@ -49,7 +49,7 @@ class Embedder:
         """Generate embeddings for a list of texts"""
         all_embeddings = []
         
-        for i in tqdm(range(0, len(texts), self.batch_size), desc="[EMBEDDER] Embedding texts"):
+        for i in tqdm(range(0, len(texts), self.batch_size), desc="[EMBEDDER] Embedding texts", disable=True):
             batch_texts = texts[i:i + self.batch_size]
             
             encodings = self.tokenizer.encode_batch(batch_texts)
@@ -71,7 +71,7 @@ class Embedder:
         """Generate embeddings for a list of images"""
         all_embeddings = []
         
-        for i in tqdm(range(0, len(image_paths), self.batch_size), desc="[EMBEDDER] Embedding images"):
+        for i in tqdm(range(0, len(image_paths), self.batch_size), desc="[EMBEDDER] Embedding images", disable=True):
             batch_paths = image_paths[i:i + self.batch_size]
             
             images = []

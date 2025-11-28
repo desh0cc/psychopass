@@ -49,7 +49,7 @@ def parse_discord(path: str) -> Tuple[List[Message], List[Chat]]:
 
     BASE_URL = "https://cdn.discordapp.com/avatars"
 
-    for data in tqdm(data_to_parse, desc="Reading files"):
+    for data in tqdm(data_to_parse, desc="Reading files", disable=True):
         chat = Chat(
             id=0,
             name=data[0].get("name","uknown"),
@@ -58,7 +58,7 @@ def parse_discord(path: str) -> Tuple[List[Message], List[Chat]]:
 
         chats.append(chat)
 
-        for message in tqdm(data, desc="Reading data"):
+        for message in tqdm(data, desc="Reading data", disable=True):
             media, text, reply = None, None, None
 
             text = message.get("content")
