@@ -26,7 +26,7 @@
 
 **Psychopass** is just a fun side project built around an **emotion classifier**, but I also designed it to be a **useful and easy-to-use chat storage**.  It lets you store chats you may not need anymore or want to remove from your messengers without losing them completely.
 
-If you think this project is any cool consider giving it a **star** — I would really appreciate that! (*≧ω≦*)
+If you think this project is any cool consider giving it a **star** I would really appreciate that! (*≧ω≦*)
 
 ---
 
