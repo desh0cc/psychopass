@@ -1,7 +1,59 @@
-# Tauri + SvelteKit + TypeScript
+# PSYCHOPASS
 
-This template should help get you started developing with Tauri, SvelteKit and TypeScript in Vite.
+<p align="center">
+  <img src="src-tauri/icons/icon.png" alt="App Logo" width="125" height="125">
+</p>
 
-## Recommended IDE Setup
+<p align="center">
+  Built with:
+</p>
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+<p align="center">
+  <a href="https://v2.tauri.app/" target="_blank">
+    <img src="static/Tauri.svg" alt="Tauri Logo" width="50" height="50">
+  </a>
+  <a href="https://github.com/pytauri/pytauri/" target="_blank">
+    <img src="static/pytauri.svg" alt="pyTauri Logo" width="50" height="50">
+  </a>
+  <a href="https://svelte.dev/" target="_blank">
+    <img src="static/svelte.svg" alt="Svelte Logo" width="50" height="50">
+  </a>
+</p>
+
+
+---
+
+## Project Info
+
+**Psychopass** is just a fun side project built around an **emotion classifier**, but I also designed it to be a **useful and easy-to-use chat storage**.  
+It lets you store chats you may not need anymore or want to remove from your messengers without losing them completely
+
+if you think this project is any cool consider giving it a **star** I would really appreciate that! (*≧ω≦*)
+
+---
+
+## Main Features
+
+### Fully Local
+All messages are stored in a local **SQLite3 database** on your device so all your data stays with you
+
+### Emotion Classifier
+Sorts your messages by emotion so you can explore and rediscover old messages as well as the ones you may not want to see anymore 👀
+
+### Database Management
+- Change avatars, names, and manage **your data** however you want  
+- **. . . LINK AND MERGE! . . .**
+  - Merge different accounts into one for easy profile management
+
+### Memory Search
+Search your messages with **both vector and linear search engines**
+
+---
+
+## Contribute
+
+If you know how to make this application more useful, consider making a [Feature Request](https://github.com/desh0cc/psychopass/issues/new?template=feature_request.md). 
+I’ll try to implement the idea if it’s interesting :p
+
+## License
+This project is licensed under the terms of the [*GPLv3*](LICENSE).
