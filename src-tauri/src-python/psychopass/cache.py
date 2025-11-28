@@ -68,6 +68,8 @@ class Cache:
         cached_path = os.path.join(self.cache_path, hashname)
 
         if not os.path.exists(cached_path):
+            os.makedirs(os.path.dirname(cached_path), exist_ok=True)
+
             # atomic write
             tmp_path = cached_path + ".tmp"
             with open(tmp_path, "wb") as f:
@@ -75,3 +77,4 @@ class Cache:
             os.replace(tmp_path, cached_path)
 
         return cached_path
+

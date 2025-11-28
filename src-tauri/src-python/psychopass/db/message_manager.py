@@ -226,7 +226,7 @@ class MessageManager:
                 LEFT JOIN profile p ON m.user_id = p.id
                 WHERE p.id = ?
                 AND m.emotion = ?
-                ORDER BY m.timestamp ASC
+                ORDER BY m.timestamp DESC
             """, (user_id, emotion))
             rows = cursor.fetchall()
             for id, chat_canon_id, user_id, text, timestamp, emotion, author_name, avatar in rows:

@@ -27,17 +27,15 @@ class Memory:
             metadatas=metadatas,
         )
 
-    def add_text(self, messages: list[Message], texts: list[str]):
-        embeddings = self.embedder.embed_texts(texts)
-
+    def add_text(self, messages: list[Message], embeddings: np.ndarray):
         items = []
-        for msg, emb, text in zip(messages, embeddings, texts):
+        for msg, emb in zip(messages, embeddings):
             uniq_id = uuid.uuid4().int
 
             items.append({
                 "id": uniq_id,
                 "embedding": emb,
-                "document": text,
+                "document": msg.text,
                 "metadata": {
                     "type": "text",
                     "original_id": msg.id,
@@ -50,9 +48,7 @@ class Memory:
         return embeddings
 
 
-    def add_images(self, messages: list[Message], images: list[str]):
-        embeddings = self.embedder.embed_images(images)
-
+    def add_images(self, messages: list[Message], embeddings: np.ndarray):
         items = []
         for msg, emb in zip(messages, embeddings):
             uniq_id = uuid.uuid4().int

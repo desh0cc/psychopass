@@ -1,5 +1,4 @@
-import sqlite3
-import os
+import sqlite3, os
 from typing import Optional, List
 from contextlib import contextmanager
 
@@ -124,7 +123,7 @@ class UserDB:
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS stats (
                     id INTEGER PRIMARY KEY CHECK(id = 1),
-                    version TEXT DEFAULT '0.1.0',
+                    version TEXT DEFAULT '0.2.0',
                     messages INT DEFAULT 0,
                     uploads INT DEFAULT 0,
                     profiles INT DEFAULT 0,
@@ -198,4 +197,3 @@ class UserDB:
     
     def update_stats_auto(self):
         return self.stats.update_auto()
-    
