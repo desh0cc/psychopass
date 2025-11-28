@@ -15,7 +15,7 @@ dependencies = [
     "torch>=2.1.0",
     "tqdm>=4.67.1",
     "albumentations>=2.0",
-    "huggingface-hub>=1.1.5"
+    "huggingface-hub>=0.20.0"
 ]
 
 [dependency-groups]
