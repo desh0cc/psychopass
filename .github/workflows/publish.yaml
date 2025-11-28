@@ -76,6 +76,31 @@ jobs:
         run: |
           pnpm install
 
+      # Install models via install.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install models
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install . \
+            --extra-index-url https://download.pytorch.org/whl/cpu
+          python install.py
+
+      # Verify models were downloaded
+      - name: Verify models directory
+        run: |
+          echo "[DEBUG] Checking models directory..."
+          ls -la src-tauri/models/ || echo "[DEBUG] Models directory not found!"
+          if [ -d "src-tauri/models/clip-ViT-B-32-multilingual-v1" ]; then
+            echo "[DEBUG] Model clip-ViT-B-32-multilingual-v1 found:"
+            ls -la src-tauri/models/clip-ViT-B-32-multilingual-v1/
+          else
+            echo "[ERROR] Model clip-ViT-B-32-multilingual-v1 not found!"
+            exit 1
+          fi
+
       # See:
       # - <https://github.com/astral-sh/python-build-standalone/releases>
       # - <https://raw.githubusercontent.com/astral-sh/python-build-standalone/latest-release/latest-release.json>
@@ -108,31 +133,6 @@ jobs:
               --compile-bytecode \
               --python=${{ env.PYTHON_PATH }} \
               ./src-tauri
-
-      # Install models via install.py
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install models
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install . \
-            --extra-index-url https://download.pytorch.org/whl/cpu
-          python install.py
-
-      # Verify models were downloaded
-      - name: Verify models directory
-        run: |
-          echo "[DEBUG] Checking models directory..."
-          ls -la src-tauri/models/ || echo "[DEBUG] Models directory not found!"
-          if [ -d "src-tauri/models/clip-ViT-B-32-multilingual-v1" ]; then
-            echo "[DEBUG] Model clip-ViT-B-32-multilingual-v1 found:"
-            ls -la src-tauri/models/clip-ViT-B-32-multilingual-v1/
-          else
-            echo "[ERROR] Model clip-ViT-B-32-multilingual-v1 not found!"
-            exit 1
-          fi
 
       # Set build environment variables, see:
       # <https://pytauri.github.io/pytauri/latest/usage/tutorial/build-standalone/#build-and-bundle>
