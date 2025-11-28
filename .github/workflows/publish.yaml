@@ -109,6 +109,13 @@ jobs:
               --python=${{ env.PYTHON_PATH }} \
               ./src-tauri
 
+      # Install models via install.py
+      - name: Install models
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install sentence-transformers torch
+          python install.py
+
       # Set build environment variables, see:
       # <https://pytauri.github.io/pytauri/latest/usage/tutorial/build-standalone/#build-and-bundle>
 
@@ -145,14 +152,6 @@ jobs:
 
           echo "PYO3_PYTHON=$PYO3_PYTHON" >> $GITHUB_ENV
           echo "RUSTFLAGS=$RUSTFLAGS" >> $GITHUB_ENV
-
-      # Install models via install.py
-      - name: Install models
-        run: |
-          $PYO3_PYTHON install.py
-        shell: bash
-        env:
-          PYO3_PYTHON: ${{ env.PYO3_PYTHON }}
 
       - name: Build and bundle the app
         uses: tauri-apps/tauri-action@v0
