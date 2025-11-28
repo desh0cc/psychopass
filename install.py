@@ -1,4 +1,3 @@
-import os
 import shutil
 from pathlib import Path
 from huggingface_hub import hf_hub_download
@@ -50,8 +49,8 @@ for name, data in models.items():
                 repo_id=data['repo_id'],
                 filename=file
             )
-            # Changed from os.replace() to shutil.move() to support cross-drive moves
-            shutil.move(file_path, str(dest_path))
+
+            shutil.copy2(file_path, str(dest_path))
             print(f"[DEBUG] Saved {file} -> {dest_path}")
         except Exception as e:
             print(f"[WARNING] Could not download {file}: {e}")
