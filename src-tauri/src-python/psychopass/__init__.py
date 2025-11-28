@@ -43,7 +43,7 @@ database: UserDB = UserDB(DB_DIR,CACHE_DIR)
 
 # Logging
 logging.basicConfig(level=logging.DEBUG)
-logging.debug("Python backend started")
+logging.debug("[DEBUG] Python backend started")
 
 # multithreading
 executor = ThreadPoolExecutor(max_workers=3)
@@ -204,90 +204,63 @@ async def change_config_value(body: Annotated[KeyRequest, "body"]) -> bool:
         return True
     return False
 
-def process_batch(batch: list[Message]) -> np.ndarray:
-    embeddings: list[Optional[np.ndarray]] = [None] * len(batch)
-    
-    text_messages, text_inputs, text_indices = [], [], []
-    image_messages, image_inputs, image_indices = [], [], []
+def process_batch(batch: list[Message]) -> dict:
+    valid_messages = []
+    text_messages, text_inputs = [], []
+    image_messages, image_inputs = [], []
 
-    for idx, msg in enumerate(batch):
+    for msg in batch:
         if msg.text and msg.text.strip():
             text_messages.append(msg)
             text_inputs.append(msg.text)
-            text_indices.append(idx)
+            valid_messages.append(msg)
         elif msg.media:
             img = None
             for m in msg.media:
-                if m.type == "photo":
+                if m.type == "photo" and m.path and os.path.exists(m.path):
                     img = m.path
                     break
-                if m.thumbnail:
+                if m.thumbnail and os.path.exists(m.thumbnail):
                     img = m.thumbnail
+                    break
             if img:
                 image_messages.append(msg)
                 image_inputs.append(img)
-                image_indices.append(idx)
+                valid_messages.append(msg)
 
-    if text_messages:
-        text_embeddings = embedder.embed_texts(text_inputs) 
-        for emb_idx, batch_idx in enumerate(text_indices):
-            embeddings[batch_idx] = text_embeddings[emb_idx]
+    text_embeddings = embedder.embed_texts(text_inputs) if text_inputs else np.array([]).reshape(0, 512)
+    image_embeddings = embedder.embed_images(image_inputs) if image_inputs else np.array([]).reshape(0, 512)
 
-    if image_messages:
-        image_embeddings = embedder.embed_images(image_inputs)
-        for emb_idx, batch_idx in enumerate(image_indices):
-            if embeddings[batch_idx] is None:
-                embeddings[batch_idx] = image_embeddings[emb_idx]
-
-    embedding_dim = None
-    for emb in embeddings:
-        if emb is not None:
-            embedding_dim = len(emb)
-            break
+    classifier_embeddings = []
     
-    if embedding_dim is None:
-        raise ValueError("No valid embeddings found in batch")
-    
-    for idx in range(len(embeddings)):
-        if embeddings[idx] is None:
-            embeddings[idx] = np.zeros(embedding_dim, dtype=float)
-    
-    return np.array(embeddings)
-    
+    for msg in valid_messages:
+        for i, text_msg in enumerate(text_messages):
+            if msg is text_msg:
+                classifier_embeddings.append(text_embeddings[i])
+                break
+        else:
+            for i, img_msg in enumerate(image_messages):
+                if msg is img_msg:
+                    classifier_embeddings.append(image_embeddings[i])
+                    break
 
-def add_messages_to_vector_db(messages: list[Message], batch_size: int = 100):
-    for i in range(0, len(messages), batch_size):
-        batch = messages[i:i + batch_size]
-        
-        text_messages, text_inputs = [], []
-        image_messages, image_inputs = [], []
-        
-        for msg in batch:
-            if not msg.id:
-                continue
-                
-            if msg.text and msg.text.strip():
-                text_messages.append(msg)
-                text_inputs.append(msg.text)
-            elif msg.media:
-                img = None
-                for m in msg.media:
-                    if m.type == "photo":
-                        img = m.path
-                        break
-                    if m.thumbnail:
-                        img = m.thumbnail
-                if img:
-                    image_messages.append(msg)
-                    image_inputs.append(img)
-        
-        if text_messages:
-            memory.add_text(text_messages, text_inputs)
-        
-        if image_messages:
-            memory.add_images(image_messages, image_inputs)
+    return {
+        "messages": valid_messages,
+        "text_embeddings": (text_messages, text_embeddings),
+        "image_embeddings": (image_messages, image_embeddings),
+        "classifier_embeddings": np.stack(classifier_embeddings) if classifier_embeddings else np.array([]).reshape(0, 512)
+    }
 
-def get_emotion_class(app_handle: AppHandle, messages: list[Message], current_fn: str, batch_size: int = 16) -> list[str]:
+def get_emotion_class(
+        app_handle: AppHandle, 
+        platform: str, 
+        messages: list[Message], 
+        chats: list[Chat], 
+        current_fn: str, 
+        loop, 
+        batch_size: int = 32
+    ) -> list[str]:
+
     predictions = []
     num_batches = math.ceil(len(messages) / batch_size)
 
@@ -304,42 +277,54 @@ def get_emotion_class(app_handle: AppHandle, messages: list[Message], current_fn
             )
         )
 
-        batch_predictions = classifier.predict_batch(process_batch(batch))
+        result = process_batch(batch)
+        
+        batch_predictions = classifier.predict_batch(result["classifier_embeddings"])
+
+        for msg, emo in zip(batch, batch_predictions):
+            msg.emotion = emo
+
+        future = asyncio.run_coroutine_threadsafe(
+            database.add_messages_batch(platform, batch, chats),
+            loop
+        )
+        future.result() 
+
+        if result["text_embeddings"][1].shape[0] > 0:
+            memory.add_text(*result["text_embeddings"])
+        if result["image_embeddings"][1].shape[0] > 0:
+            memory.add_images(*result["image_embeddings"])
+
         predictions.extend(batch_predictions)
 
     return predictions
 
 async def parse_messages(app_handle: AppHandle, body: Annotated[FileDir, "body"]) -> Tuple[List[Message], List[Chat]]:
     loop = asyncio.get_running_loop()
-    messages, chats = parser.parse(body.platform, body.path)
+    messages, chats = await loop.run_in_executor(
+        executor,
+        parser.parse,
+        body.platform,
+        body.path
+    )
 
-    emotions = await loop.run_in_executor(
+    await loop.run_in_executor(
         executor,
         get_emotion_class,
         app_handle,
+        body.platform,
         messages,
-        os.path.basename(body.path)
+        chats,
+        os.path.basename(body.path),
+        loop
     )
-
-    for msg, emo in zip(messages, emotions):
-        msg.emotion = emo
 
     return messages, chats
 
 @commands.command()
 @handle_errors
 async def analyze_messages(app_handle: AppHandle, body: Annotated[FileDir, "body"]) -> None:
-    batch_data = await parse_messages(app_handle, body)
-    messages, chats = batch_data
-    
-    await database.add_messages_batch(body.platform, messages, chats)
-    
-    loop = asyncio.get_running_loop()
-    await loop.run_in_executor(
-        executor,
-        add_messages_to_vector_db,
-        messages
-    )
+    await parse_messages(app_handle, body)
     database.update_stats_auto()
 
 @commands.command()
