@@ -18,6 +18,7 @@ If you think this project is any cool consider giving it a **star** I would real
   <img src="static/pytauri.svg" alt="pyTauri Logo" width="50" height="50">
   <img src="static/svelte.svg" alt="Svelte Logo" width="50" height="50">
 </p>
+
 ---
 
 ## Downloads
@@ -27,8 +28,12 @@ For more see [Releases](https://github.com/desh0cc/psychopass/releases)
 | Platform        | Version | Download | Tested |
 |-----------------|---------|----------|--------|
 | Windows 64-bit  | 0.2.0   | [Download](https://github.com/desh0cc/psychopass/releases/download/0.2.0/psychopass_0.2.0_x64_en-US.msi) | True |
-| macOS           | 0.1.0   | [Download]() | False |
-| Linux           | 0.1.0   | [Download]() | False |
+| macOS           | 0.1.0   | - | False |
+| Linux           | 0.1.0   | - | False |
+
+> [!WARNING]
+> This project is still under development and may contain bugs
+> <br/> Feel free to report any problems
 
 ---
 
