@@ -4,14 +4,6 @@
   <img src="static/github/banner.png" alt="App Logo" width="720">
 </p>
 
-#### Built with:
-<p>
-  <img src="static/Tauri.svg" alt="Tauri Logo" width="50" height="50">
-  <img src="static/pytauri.svg" alt="pyTauri Logo" width="50" height="50">
-  <img src="static/svelte.svg" alt="Svelte Logo" width="50" height="50">
-</p>
-
-
 ---
 
 ## Project Info
@@ -20,6 +12,12 @@
 
 If you think this project is any cool consider giving it a **star** I would really appreciate that! (*≧ω≦*)
 
+#### Built with:
+<p>
+  <img src="static/Tauri.svg" alt="Tauri Logo" width="50" height="50">
+  <img src="static/pytauri.svg" alt="pyTauri Logo" width="50" height="50">
+  <img src="static/svelte.svg" alt="Svelte Logo" width="50" height="50">
+</p>
 ---
 
 ## Downloads
@@ -28,9 +26,9 @@ For more see [Releases](https://github.com/desh0cc/psychopass/releases)
 
 | Platform        | Version | Download | Tested |
 |-----------------|---------|----------|--------|
-| Windows 64-bit  | 0.2.0   | [Download](https://github.com/desh0cc/psychopass/releases/download/0.2.0/psychopass_0.2.0_x64_en-US.msi) | False |
-| macOS           | 0.2.0   | [Download]() | False |
-| Linux           | 0.2.0   | [Download]() | False |
+| Windows 64-bit  | 0.2.0   | [Download](https://github.com/desh0cc/psychopass/releases/download/0.2.0/psychopass_0.2.0_x64_en-US.msi) | True |
+| macOS           | 0.1.0   | [Download]() | False |
+| Linux           | 0.1.0   | [Download]() | False |
 
 ---
 
@@ -40,7 +38,7 @@ For more see [Releases](https://github.com/desh0cc/psychopass/releases)
 All messages are stored in a local **SQLite3 database** on your device so all your data stays with you.
 
 ### Emotion Classifier
-Sorts your messages by emotion so you can explore and rediscover old messages as well as the ones you may not want to see anymore 👀  
+Sorts your messages by emotion so you can explore and rediscover old messages as well as the ones you may not want to see anymore 👀 </br> 
 Basically acts as the non-chronological message provider to make storing chats more interesting.
 
 ### Database Management
