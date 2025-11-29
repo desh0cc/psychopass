@@ -1,24 +1,16 @@
 # PSYCHOPASS
 
 <p align="center">
-  <img src="src-tauri/icons/icon.png" alt="App Logo" width="125" height="125">
+  <img src="static/github/banner.png" alt="App Logo" width="720">
 </p>
 
-<p align="center">
-  Built with:
+#### Built with:
+<p>
+  <img src="static/Tauri.svg" alt="Tauri Logo" width="50" height="50">
+  <img src="static/pytauri.svg" alt="pyTauri Logo" width="50" height="50">
+  <img src="static/svelte.svg" alt="Svelte Logo" width="50" height="50">
 </p>
 
-<p align="center">
-  <a href="https://v2.tauri.app/" target="_blank">
-    <img src="static/Tauri.svg" alt="Tauri Logo" width="50" height="50">
-  </a>
-  <a href="https://github.com/pytauri/pytauri/" target="_blank">
-    <img src="static/pytauri.svg" alt="pyTauri Logo" width="50" height="50">
-  </a>
-  <a href="https://svelte.dev/" target="_blank">
-    <img src="static/svelte.svg" alt="Svelte Logo" width="50" height="50">
-  </a>
-</p>
 
 ---
 
